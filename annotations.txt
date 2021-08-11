@@ -1,0 +1,85 @@
+List:
+docker container ps
+docker container ps -a
+docker container ls
+docker container ls -a
+docker image ls
+docker image ls -a
+docker network ls
+
+Show logs:
+docker container logs <tag>
+
+Inspect the container:
+docker container inspect <tag>
+
+Show what system the container are using:
+docker container exec <tag> uname -or
+
+Run:
+docker container run <tag>
+docker container run <tag> <command>
+
+Goes to terminal into container:
+docker container run -it <tag> <bash>
+
+Run a container with a custom name:
+docker container run --name <custom name> run -it <tag> <bash>
+
+Reusing a container:
+docker container start -ai <container-name>
+
+Exposing a door (Mapping doors):
+docker container run -p <Exposed door>:<Internal door> <tag>
+Ex: docker container run -p 8080:80 nginx
+
+Creating a volume (Mapping directories):
+docker container run -v <Exposed volume>:<Internal volume> <tag>
+Ex: docker container run -p 8080:80 -v $(pwd)/html:/usr/share/nginx/html nginx
+What does this command do?
+When I access port 8080, instead of accessing the nginx html page, it will access the html page that I created and exposed.
+
+Using a container in backdoor (Daemon mode):
+docker container run -d <tag>
+Ex: docker container run -d -p 8080:80 -v $(pwd)/html:/usr/share/nginx/html nginx
+What does this command do?
+Start the container in background, so you can you the terminal to do other stuff
+
+Stop a container:
+docker container stop <id>
+
+Rename a image:
+docker image tag <old-name> <new-name>
+Ex: docker image tag redis:latest my-redis-image
+
+Download an image from DockerHub:
+docker image pull <image-from-dockerhub>
+
+Remove:
+docker container rm <id>
+docker image rm <id>
+
+Build:
+docker image build -t <custom-image-name> <path-of-dockerfile>
+Ex: docker image build -t simple-build .
+Obs: Use '.' on the path if you're already into the path of the dockerfile
+
+Build with args:
+docker image build --build-arg <ARG-name>=<args> -t <tag> <path>
+Ex: docker image build --build-arg S3_BUCKET=myapp -t my-example .
+
+Run container with a specific network:
+docker container run -d --net <type> <tag>
+Ex: docker container run -d --net none debian
+Types:
+bridge (default) - isolate the container network using a bridge
+none - can't access other local containers, neither the internet
+host - low security, because will access the network interface directly from container
+
+Creating a network:
+docker network create --driver <type> <tag>
+Ex: docker network create --driver bridge myNetwork
+
+Connect/Disconnect from a network:
+docker network connect <network-name> <container-name>
+docker network disconnect <network-name> <container-name>
