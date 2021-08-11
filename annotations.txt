@@ -83,3 +83,11 @@ Ex: docker network create --driver bridge myNetwork
 Connect/Disconnect from a network:
 docker network connect <network-name> <container-name>
 docker network disconnect <network-name> <container-name>
+
+docker-compose:
+docker-compose up
+docker-compose down
+docker-compose start
+docker-compose stopclear
+
+docker-compose logs -f -t
