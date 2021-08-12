@@ -87,6 +87,7 @@ docker network disconnect <network-name> <container-name>
 docker-compose:
 docker-compose up
 docker-compose down
+docker-compose down -v (remove also volumes)
 docker-compose start
 docker-compose stopclear
 

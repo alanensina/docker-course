@@ -19,25 +19,25 @@ class Sender(Bottle):
         dsn = f'dbname={db_name} user={db_user} host={db_host}'
         self.conn = psycopg2.connect(dsn)
         
-    def register_message(self, assunto, mensagem):
-        SQL = 'INSERT INTO emails (assunto, mensagem) VALUES (%s, %s)'
+    def register_message(self, subject, message):
+        SQL = 'INSERT INTO emails (subject, message) VALUES (%s, %s)'
         cur = self.conn.cursor()
-        cur.execute(SQL, (assunto, mensagem))
+        cur.execute(SQL, (subject, message))
         self.conn.commit()
         cur.close()
 
-        msg = {'assunto': assunto, 'mensagem': mensagem}
+        msg = {'subject': subject, 'message': message}
         self.fila.rpush('sender', json.dumps(msg))
 
-        print('Mensagem registrada !')
+        print('message registered!')
 
     def send(self):
-        assunto = request.forms.get('assunto')
-        mensagem = request.forms.get('mensagem')
+        subject = request.forms.get('subject')
+        message = request.forms.get('message')
 
-        self.register_message(assunto, mensagem)
-        return 'Mensagem enfileirada ! Assunto: {} Mensagem: {}'.format(
-            assunto, mensagem
+        self.register_message(subject, message)
+        return 'message queued! subject: {} message: {}'.format(
+            subject, message
         )
 
 if __name__ == '__main__':

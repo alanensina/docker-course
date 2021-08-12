@@ -1,54 +1,56 @@
 version: '3'
 volumes:
-  dados:
+  data:
 networks:
-  banco:
-  web:
-  fila:
+  db_network:
+  web_network:
+  queue_network:
 services:
   db:
     image: postgres:9.6
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
-      # Data
-      - dados:/var/lib/postgresql/data
+      # Volume data
+      - data:/var/lib/postgresql/data
       # Scripts
       - ./scripts:/scripts
       - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
-      - banco
+      - db_network
   frontend:
     image: nginx:1.13
     volumes:
-      # Site
+      # Website
       - ./web:/usr/share/nginx/html/
       # Reverse proxy
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     ports:
       - 80:80
     networks:
-      - web
+      - web_network
     depends_on:
       - app
   app:
     image: python:3.6
     volumes:
-      # Application
+      # App
       - ./app:/app
     working_dir: /app
     command: bash ./app.sh
     networks:
-      - banco
-      - web
-      - fila
+      - db_network
+      - web_network
+      - queue_network
     depends_on:
       - db
       - queue
     environment:
-      - DB_NAME=abc_sender
+      - DB_NAME=old_database #Override in docker-compose.override.yml
   queue:
     image: redis:3.2
     networks:
-      - fila
+      - queue_network
   worker:
     build: worker
     volumes:
@@ -57,6 +59,6 @@ services:
     working_dir: /worker
     command: worker.py
     networks:
-      - fila
+      - queue_network
     depends_on:
       - queue
